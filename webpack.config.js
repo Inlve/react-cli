@@ -107,6 +107,10 @@ module.exports = env => {
         },
         resolve: {
             extensions: [".js", ".jsx", ".css", ".scss"],
+            alias: {
+                "~": __dirname,
+                "@": path.join(__dirname, "src/"),
+            }
         },
         output: {
             filename: "[name].bundle.js",
