@@ -1,13 +1,19 @@
 require("@babel/polyfill");
 
 const path = require("path");
+const glob = require('glob')
+
 
 const merge = require('webpack-merge');
 const MiniCssExtract = require("mini-css-extract-plugin");
-
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const PurgecssPlugin = require('purgecss-webpack-plugin');
 
 const productionConfig = require("./build/webpack.prod.js");
 const developmentConfig = require("./build/webpack.dev.js");
+
 
 /***
  * 根据不同环境,生成相应配置
@@ -43,9 +49,6 @@ module.exports = env => {
                         {
                             loader: "css-loader",
                             options: {
-                                modules: isDevelopment ? false : {
-                                    localIdentName: "[path][name]__[local]--[hash:base64:5]"
-                                },
                                 sourceMap: isDevelopment
                             }
                         },
@@ -105,6 +108,33 @@ module.exports = env => {
                 }
             ]
         },
+        plugins: [
+            new CopyWebpackPlugin([{
+                from: path.join(__dirname, "src/assets/"),
+                to: path.join(__dirname, "dist/")
+            }]),
+            new HtmlWebpackPlugin({
+                filename: "index.html",
+                template: path.join(__dirname, "public/index.html"),
+                favicon: path.join(__dirname, "public/favicon.ico"),
+            }),
+            new MiniCssExtract({
+                filename: "[name].css",
+                chunkFilename: "[id].css",
+                ignoreOrder: false
+            }),
+            new PurgecssPlugin({
+                paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, { nodir: true }),
+            }),
+            new OptimizeCssAssetsPlugin({
+                assetNameRegExp: /\.css$/g,
+                cssProcessor: require('cssnano'),
+                cssProcessorPluginOptions: {
+                    preset: "default",
+                },
+                canPrint: true
+            }),
+        ],
         resolve: {
             extensions: [".js", ".jsx", ".css", ".scss"],
             alias: {

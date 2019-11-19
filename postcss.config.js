@@ -3,6 +3,6 @@ module.exports = {
         require('autoprefixer'),
         require('postcss-initial')({
             reset: "inherited",
-        })
+        }),
     ]
 }

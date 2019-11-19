@@ -4,14 +4,6 @@ module.exports = {
         "@babel/preset-react"
     ],
     "plugins": [
-        ["react-css-modules", {
-            "generateScopedName": "[path][name]__[local]--[hash:base64:5]",
-            "filetypes": {
-                ".scss": {
-                    "syntax": "postcss-scss"
-                }
-            }
-        }],
-        "react-hot-loader/babel"
+        "react-hot-loader/babel",
     ],
 }
